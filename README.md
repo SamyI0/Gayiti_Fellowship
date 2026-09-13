@@ -85,4 +85,34 @@ autonomous decision-making by Demo Day.
 
 ---
 
-## Repository Structure
+## Repository Structure 
+
+Gayiti_Fellowship/
+│
+├── README.md
+│
+├── module-1/
+│ ├── n8n-referral-partner-program/
+│ │ ├── workflow.json
+│ │ ├── README.md
+│ │ └── screenshots/
+│ │
+│ └── tasklet-customer-retention/
+│ ├── README.md
+│ └── screenshots/
+│
+├── module-2/ (coming)
+├── module-3/ (coming)
+├── module-4/ (coming)
+├── module-5/ (coming)
+└── module-6/ (coming)
+
+
+---
+
+## Connect
+
+Built by **Kendersly Tierry Samuel Destin**
+Electrical & Electronics Engineering Student
+
+*Gayiti AI Fellowship — Cohort 1 — 2026*
