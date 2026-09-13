@@ -1,0 +1,447 @@
+{
+  "name": "Referral Partner Program",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "referral",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "2d274341-323b-4c14-87eb-5b3ceb9ad42f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "8d219a8d-4663-4d09-afc4-0a83d6774b0e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2741762-2b6b-482f-9707-7452c3283cb5",
+              "leftValue": "={{ $json.body.partner_code }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f3679d41-c10f-468f-9a49-bfd3150825dc",
+              "leftValue": "={{ $json.body.prospect_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "564b5cdb-0a90-4275-ad5e-8549d49b40f4",
+              "leftValue": "={{ $json.body.prospect_email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fbfff3b2-2702-4d15-93d1-3bfe1281a6fb",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1769e45a-f996-463e-9670-cf657faa7640",
+              "leftValue": "={{ $('Webhook').item.json.body.partner_code }}",
+              "rightValue": "Yeobo",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "c50b61c1-6169-4681-a1c6-84ba36a4f539",
+              "leftValue": "={{ $('Webhook').item.json.body.partner_code }}",
+              "rightValue": "PARTNER002",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "cb622d97-bcfe-464c-8fd5-1e8f467b3a59",
+              "leftValue": "={{ $('Webhook').item.json.body.partner_code }}",
+              "rightValue": "PARTNER003",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "27133dac-1ebc-46ab-8b43-5fb2dace6691",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1RIoIhphUREeroXNAejhteqChPaGnffeeOnO0Nt-zzKY",
+          "mode": "list",
+          "cachedResultName": "Prospect DataBase",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RIoIhphUREeroXNAejhteqChPaGnffeeOnO0Nt-zzKY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RIoIhphUREeroXNAejhteqChPaGnffeeOnO0Nt-zzKY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{new Date().toISOString()}}",
+            "Partner Code": "={{ $('Webhook').item.json.body.partner_code }}",
+            "Prospect Name": "={{ $('Webhook').item.json.body.prospect_name }}",
+            "Prospect Email": "={{ $('Webhook').item.json.body.prospect_email }}",
+            "Prospect Phone": "={{ $('Webhook').item.json.body.prospect_phone }}",
+            "Intent": "={{ $('Webhook').item.json.body.intent }}",
+            "Attribution": "=Referred by {{ $('Webhook').item.json.body.partner_code }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Partner Code",
+              "displayName": "Partner Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prospect Name",
+              "displayName": "Prospect Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prospect Email",
+              "displayName": "Prospect Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prospect Phone",
+              "displayName": "Prospect Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Attribution",
+              "displayName": "Attribution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b44a79ee-5946-4805-86c5-4ce69510e4a4",
+      "name": "Append row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        -240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sThKx3Ia7cssP7Q0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C0V7359S7",
+          "mode": "list",
+          "cachedResultName": "referrals"
+        },
+        "text": "=🔔 New Referral Received\n\nPartner Code: {{ $('Webhook').item.json.body.partner_code }}\nProspect: {{ $('Webhook').item.json.body.prospect_name }}\nEmail: {{ $('Webhook').item.json.body.prospect_email }}\nPhone: {{ $('Webhook').item.json.body.prospect_phone }}\nIntent: {{ $('Webhook').item.json.body.intent }}\n\nLead has been saved to Google Sheets with attribution.",
+        "otherOptions": {}
+      },
+      "id": "012cfcea-c3f4-4d62-8118-48fb59a1bebc",
+      "name": "Send a message",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        832,
+        -240
+      ],
+      "webhookId": "9514561f-7b9f-4c78-ab68-4e7c659e03ae",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "kPisUazucC8Wplix",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.partner_email }}",
+        "subject": "=Referral Confirmed — Thank you, {{ $('Webhook').item.json.body.partner_code }}",
+        "emailType": "text",
+        "message": "=Hello,\n\nWe have successfully received your referral for {{ $('Webhook').item.json.body.prospect_name }}.\n\nYour partner code {{ $('Webhook').item.json.body.partner_code }} has been recorded with full attribution. Our sales team has been notified and will follow up with your prospect shortly.\n\nThank you for growing with Gaya.\n\nBest regards,\nThe Gaya Team",
+        "options": {}
+      },
+      "id": "53e355ec-6db9-468c-a64d-f68b788540f3",
+      "name": "Send a message1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        -240
+      ],
+      "webhookId": "f37fb46e-1ab4-409d-bb04-5e41afbe69d6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IXHaHS5Qkh7CLgMh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.prospect_email }}",
+        "subject": "Welcome — Gaya AI Automation Solutions",
+        "emailType": "text",
+        "message": "=Hello {{ $('Webhook').item.json.body.prospect_name }},  You have been referred to Gaya by one of our trusted partners.  Gaya builds intelligent AI automation solutions for insurance agencies and business operations — helping teams eliminate manual work, accelerate follow-ups, and scale without adding headcount.  A member of our team will reach out to you shortly to learn more about your needs and explore how we can help.  We look forward to connecting with you.  Best regards, The Gaya Team",
+        "options": {}
+      },
+      "id": "ed3249a3-e4e5-4e73-9d79-0484b90101d8",
+      "name": "Send a message2",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        -240
+      ],
+      "webhookId": "9bcdaef5-8abe-4144-8456-5124b823d52e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IXHaHS5Qkh7CLgMh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"Bad Request\", \n  \"message\": \"Unknown partner code. Please verify your partner_code and try again.\"\n}",
+        "options": {}
+      },
+      "id": "1764112a-8a56-41d0-8fe1-e1d61e1c14b8",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        528,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"Bad Request\",\n  \"message\": \"Missing required fields: partner_code, prospect_name or prospect_email\"\n}",
+        "options": {}
+      },
+      "id": "777ad79f-23d6-4362-a068-8f259af05522",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        352,
+        144
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "86748d79-5579-41cd-9d3d-0bc14babe57a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "17441a7a83d490e8b38fe1d49e8a1d6840fc0c1eb9f0ce0838363b8ac030f727"
+  },
+  "nodeGroups": [],
+  "id": "3ZC9We1AWPraxPXt",
+  "tags": []
+}
