@@ -2,4 +2,4 @@
 
 ## Projects
 - [n8n - Referral Partner Program](./n8n-referral-partner-program/)
-- [Tasklet - Customer Retention Workflow](./tasklet-customer-retention/)
+- [n8n - Customer Retention Workflow](./n8n-customer-retention/)
