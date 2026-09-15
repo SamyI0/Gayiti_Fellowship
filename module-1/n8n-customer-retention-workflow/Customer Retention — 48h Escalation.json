@@ -1,0 +1,360 @@
+{
+  "name": "Customer Retention — 48h Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9b6fd9bf-b96d-4241-bfe4-0002671d43b4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs",
+          "mode": "list",
+          "cachedResultName": "Customer Retention Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Alert Count",
+              "lookupValue": ">= 1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "2ecccbc8-5fe4-443a-ab03-21af4e27a56a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HR2ZI1dRpAVaPVMf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fd1669af-b458-4d5c-8dd3-9098c5df674a",
+              "leftValue": "={{$json[\"Last Alert Sent\"]}}",
+              "rightValue": "={{ $now.minus({ days: 2 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f89fd892-6ca5-4ae0-b396-8b2d78393a9d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C23SQMV98",
+          "mode": "list",
+          "cachedResultName": "referrals_2"
+        },
+        "text": "=⚠️ ESCALATION - NO ACTION TAKEN  Customer: {{$json[\"Customer Name\"]}} Email: {{$json[\"Email\"]}}  This customer was flagged as at-risk more than 48 hours ago with no action recorded.  Account Manager: {{$json[\"Account Manager\"]}}  STATUS: Escalated to Manager Review Immediate action required.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "e19760bb-1ff8-4158-98c9-dfda323b471c",
+      "name": "Send a message",
+      "webhookId": "23d9ba05-f99d-436d-aed5-21f6c6c5fa0d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "5ZLUWhOgItglhYsr",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs",
+          "mode": "list",
+          "cachedResultName": "Customer Retention Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Risk Status": "Manager Review"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Login Date",
+              "displayName": "Last Login Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Since Login",
+              "displayName": "Days Since Login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NPS Score",
+              "displayName": "NPS Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Renewal Date ",
+              "displayName": "Renewal Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Until Renewal ",
+              "displayName": "Days Until Renewal ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Support Escalated",
+              "displayName": "Support Escalated",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk Status",
+              "displayName": "Risk Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk Signals",
+              "displayName": "Risk Signals",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Account Manager",
+              "displayName": "Account Manager",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Alert Sent",
+              "displayName": "Last Alert Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Alert Count",
+              "displayName": "Alert Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "7324b311-c04a-4892-8523-48bc744767ae",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HR2ZI1dRpAVaPVMf",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0892c44d-93cb-49e1-af9f-dc14d1f14c18",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ce08e6666de8e5fa0dbf4ee0d6d4bc8f68c11fdfb61bcf3420034f6823d1683"
+  },
+  "nodeGroups": [],
+  "id": "OndfyCc5R8iq9p6Y",
+  "tags": []
+}
