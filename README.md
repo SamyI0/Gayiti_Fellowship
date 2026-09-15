@@ -64,7 +64,7 @@ adding error handling in M2, LLM intelligence
 in M3, an operator UI in M4, and production 
 hardening through M5 and M6.
 
-**Project 2 — Tasklet**
+**Project 2 — n8n**
 An agentic workflow system for agency operations 
 management. Each module layers new capabilities — 
 from basic task management in M1 to fully 
@@ -97,7 +97,7 @@ Gayiti_Fellowship/
 │ │ ├── README.md
 │ │ └── screenshots/
 │ │
-│ └── tasklet-customer-retention/
+│ └── n8n-customer-retention/
 │ ├── README.md
 │ └── screenshots/
 │
