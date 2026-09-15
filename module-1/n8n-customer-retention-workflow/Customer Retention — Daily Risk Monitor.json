@@ -1,0 +1,626 @@
+{
+  "name": "Customer Retention — Daily Risk Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "651ac989-ba3a-4b0c-817f-b733fed3d5cb",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs",
+          "mode": "list",
+          "cachedResultName": "Customer Retention Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "415d7771-f301-4c1d-a77f-a7d1f9103404",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HR2ZI1dRpAVaPVMf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1a00001-0000-4000-8000-000000000001",
+              "name": "alert_message",
+              "type": "string",
+              "value": "={{ \"🔴 CUSTOMER AT RISK\\n\\nCustomer: \" + $json[\"Customer Name\"] + \"\\nEmail: \" + $json[\"Email\"] + \"\\nAccount Manager: \" + $json[\"Account Manager\"] + \"\\n\\nRISK SIGNALS DETECTED:\\n- Days Since Login: \" + $json[\"Days Since Login\"] + \" days\\n- NPS Score: \" + $json[\"NPS Score\"] + \"/10\\n- Days Until Renewal: \" + $json[\"Days Until Renewal \"] + \" days\\n- Support Escalated: \" + $json[\"Support Escalated\"] + \"\\n\\nSUGGESTED NEXT STEP:\\nContact \" + $json[\"Customer Name\"] + \" immediately.\\nOffer a check-in call and address any pain points.\\nEscalate to manager if no response in 48 hours.\\n\\nPriority: CRITICAL\" }}"
+            },
+            {
+              "id": "f1a00001-0000-4000-8000-000000000002",
+              "name": "customer_name",
+              "type": "string",
+              "value": "={{ $json[\"Customer Name\"] }}"
+            },
+            {
+              "id": "f1a00001-0000-4000-8000-000000000003",
+              "name": "customer_email",
+              "type": "string",
+              "value": "={{ $json[\"Email\"] }}"
+            },
+            {
+              "id": "f1a00001-0000-4000-8000-000000000004",
+              "name": "row_number",
+              "type": "number",
+              "value": "={{ $json[\"row_number\"] }}"
+            },
+            {
+              "id": "f1a00001-0000-4000-8000-000000000005",
+              "name": "Customer Name",
+              "type": "string",
+              "value": "={{ $json[\"Customer Name\"] }}"
+            },
+            {
+              "id": "f1a00001-0000-4000-8000-000000000006",
+              "name": "Alert Count",
+              "type": "number",
+              "value": "={{ Number($json[\"Alert Count\"]) || 0 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1368c2a-84d2-46eb-a3f8-bd77dd294794",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1568,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C23SQMV98",
+          "mode": "list",
+          "cachedResultName": "referrals_2"
+        },
+        "text": "={{$json[\"alert_message\"]}}",
+        "otherOptions": {}
+      },
+      "id": "94778542-69ab-410f-8f9c-eb3a4f0728a7",
+      "name": "Send a message",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1792,
+        144
+      ],
+      "webhookId": "aeb782b6-f7be-48a9-861c-eeaf17a45d11",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "5ZLUWhOgItglhYsr",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs",
+          "mode": "list",
+          "cachedResultName": "Customer Retention Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/198PpWVvhvnPjJ0NsezxOfii6Y4z-u_1iSaocsgVrkVs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ $(\"Edit Fields\").item.json[\"Customer Name\"] }}",
+            "Risk Status": "At-Risk This Week",
+            "Last Alert Sent": "={{ new Date().toISOString().split(\"T\")[0] }}",
+            "Alert Count": "={{ ($(\"Edit Fields\").item.json[\"Alert Count\"] || 0) + 1 }}"
+          },
+          "matchingColumns": [
+            "Customer Name"
+          ],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Login Date",
+              "displayName": "Last Login Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Days Since Login",
+              "displayName": "Days Since Login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NPS Score",
+              "displayName": "NPS Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Renewal Date ",
+              "displayName": "Renewal Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Days Until Renewal ",
+              "displayName": "Days Until Renewal ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Support Escalated",
+              "displayName": "Support Escalated",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Risk Status",
+              "displayName": "Risk Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Risk Signals",
+              "displayName": "Risk Signals",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Manager",
+              "displayName": "Account Manager",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Alert Sent",
+              "displayName": "Last Alert Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Alert Count",
+              "displayName": "Alert Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "504a6f78-74de-4a81-bb45-3738b9203a93",
+      "name": "Update row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2016,
+        144
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HR2ZI1dRpAVaPVMf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "44636c8c-3964-472b-bdcf-982280e50db8",
+              "leftValue": "={{$json[\"Days Since Login\"]}}",
+              "rightValue": 30,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "67a07d7e-f215-4c92-937a-00bcad045570",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "080de166-2459-4b1a-beca-8c40d6e22d87",
+              "leftValue": "={{$json[\"NPS Score\"]}}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "52c8ebdd-a57b-4ade-888b-ec1bba526337",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "05c408ee-e8d8-4ba4-81c8-7fc194e3ee29",
+              "leftValue": "={{$json[\"Days Until Renewal \"]}}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "733100a7-fccb-4f4c-9df3-4b0555cded53",
+      "name": "If2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1088,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f7c10033-6241-47eb-98de-c6ef776a517f",
+              "leftValue": "={{$json[\"Support Escalated\"]}}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7a2429d8-7e13-487d-ba60-60d40bc01d9b",
+      "name": "If3",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1312,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "461c7ae7-cbb6-4157-bdd6-77fa13a06c04",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        448,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "eecbfeb6-6446-4ae8-9b85-5b850dad5eba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ce08e6666de8e5fa0dbf4ee0d6d4bc8f68c11fdfb61bcf3420034f6823d1683"
+  },
+  "nodeGroups": [],
+  "id": "6D7H4tGjQA5Pt6uE",
+  "tags": []
+}
